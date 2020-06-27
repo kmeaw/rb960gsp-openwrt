@@ -1,0 +1,60 @@
+From 033e66f6122522aa948bee451809d6bcff549986 Mon Sep 17 00:00:00 2001
+From: kmeaw <kmeaw@kmeaw.com>
+Date: Sat, 27 Jun 2020 23:32:16 +0000
+Subject: [PATCH] Add PoE control package
+
+---
+ package/network/utils/mtpoe_ctrl/Makefile | 41 +++++++++++++++++++++++
+ 1 file changed, 41 insertions(+)
+ create mode 100644 package/network/utils/mtpoe_ctrl/Makefile
+
+diff --git a/package/network/utils/mtpoe_ctrl/Makefile b/package/network/utils/mtpoe_ctrl/Makefile
+new file mode 100644
+index 0000000..e9b6405
+--- /dev/null
++++ b/package/network/utils/mtpoe_ctrl/Makefile
+@@ -0,0 +1,41 @@
++#
++# Copyright (C) 2018 adron@yapic.net
++#
++
++include $(TOPDIR)/rules.mk
++
++PKG_NAME:=mtpoe_ctrl
++PKG_SOURCE_VERSION:=486e2112cf667d0390070e3aeb7fbac28cf9e24d
++PKG_VERSION:=1.01
++PKG_RELEASE:=6
++
++PKG_SOURCE_PROTO:=git
++PKG_SOURCE_URL:=https://github.com/adron-s/mtpoe_ctrl.git
++PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
++PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
++
++PKG_MAINTAINER:=Sergey Sergeev <adron@yapic.net>
++PKG_LICENSE:=GPL-2.0
++
++include $(INCLUDE_DIR)/package.mk
++
++define Package/mtpoe_ctrl
++  SECTION:=utils
++  CATEGORY:=Utilities
++  DEPENDS:=+libuci +kmod-spi-dev
++  TITLE:=Management utility for Mikrotiks PoE V2(ATtiny)
++  URL:=https://github.com/adron-s/mtpoe_ctrl.git
++endef
++
++define Package/mtpoe_ctrl/description
++	Management utility for Mikrotiks PoE V2(ATtiny)
++endef
++
++define Package/mtpoe_ctrl/install
++	$(INSTALL_DIR) $(1)/usr/bin
++	$(INSTALL_BIN) $(PKG_BUILD_DIR)/bins/mtpoe_ctrl $(1)/usr/bin/
++	$(INSTALL_DIR) $(1)/etc/init.d
++	$(INSTALL_BIN) $(PKG_BUILD_DIR)/openwrt/etc/init.d/mtpoe_ctrl $(1)/etc/init.d
++endef
++
++$(eval $(call BuildPackage,mtpoe_ctrl))
+-- 
+2.27.0
+
