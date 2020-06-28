@@ -1,20 +1,20 @@
-From d72b5cb3d3d1fbbb94dfae05de6a7d65212449de Mon Sep 17 00:00:00 2001
+From 4690d01e8dc44c1a87b6020bf39676c8a69c8f54 Mon Sep 17 00:00:00 2001
 From: kmeaw <kmeaw@kmeaw.com>
 Date: Sat, 27 Jun 2020 20:44:30 +0000
-Subject: [PATCH] Add RB960GSP support
+Subject: [PATCH 1/2] Add RB960GSP support
 
 ---
- target/linux/ar71xx/base-files/etc/board.d/01_leds   |  1 +
- .../linux/ar71xx/base-files/etc/board.d/02_network   |  1 +
- target/linux/ar71xx/base-files/etc/diag.sh           |  1 +
- target/linux/ar71xx/base-files/lib/ar71xx.sh         |  3 +++
- .../linux/ar71xx/base-files/lib/upgrade/platform.sh  |  2 ++
- .../ar71xx/files/arch/mips/ath79/Kconfig.openwrt     |  1 +
- .../linux/ar71xx/files/arch/mips/ath79/mach-rbspi.c  | 12 +++++++++++-
- .../linux/ar71xx/files/arch/mips/ath79/machtypes.h   |  1 +
- target/linux/ar71xx/image/mikrotik.mk                |  2 +-
- .../701-MIPS-ath79-add-routerboard-detection.patch   |  3 ++-
- 10 files changed, 24 insertions(+), 3 deletions(-)
+ .../ar71xx/base-files/etc/board.d/01_leds     |  1 +
+ .../ar71xx/base-files/etc/board.d/02_network  |  1 +
+ target/linux/ar71xx/base-files/etc/diag.sh    |  1 +
+ target/linux/ar71xx/base-files/lib/ar71xx.sh  |  3 +++
+ .../ar71xx/base-files/lib/upgrade/platform.sh |  2 ++
+ .../files/arch/mips/ath79/Kconfig.openwrt     |  1 +
+ .../ar71xx/files/arch/mips/ath79/mach-rbspi.c | 20 ++++++++++++++++++-
+ .../ar71xx/files/arch/mips/ath79/machtypes.h  |  1 +
+ target/linux/ar71xx/image/mikrotik.mk         |  2 +-
+ ...MIPS-ath79-add-routerboard-detection.patch |  3 ++-
+ 10 files changed, 32 insertions(+), 3 deletions(-)
 
 diff --git a/target/linux/ar71xx/base-files/etc/board.d/01_leds b/target/linux/ar71xx/base-files/etc/board.d/01_leds
 index bd589c1..2a1e961 100755
@@ -99,7 +99,7 @@ index 6fd78c4..3cba567 100644
  	  MikroTik RouterBOARD hEX lite
  	  MikroTik RouterBOARD Powerbox
 diff --git a/target/linux/ar71xx/files/arch/mips/ath79/mach-rbspi.c b/target/linux/ar71xx/files/arch/mips/ath79/mach-rbspi.c
-index cb05c91..8e70df9 100644
+index cb05c91..c94eda9 100644
 --- a/target/linux/ar71xx/files/arch/mips/ath79/mach-rbspi.c
 +++ b/target/linux/ar71xx/files/arch/mips/ath79/mach-rbspi.c
 @@ -645,6 +645,7 @@ static struct gen_74x164_chip_platform_data rbspi_ssr_data = {
@@ -141,7 +141,22 @@ index cb05c91..8e70df9 100644
  	rbspi_peripherals_setup(flags);
  
  	/*
-@@ -1251,6 +1260,7 @@ MIPS_MACHINE_NONAME(ATH79_MACH_RB_MAPL, "map-hb", rbmapl_setup);
+@@ -976,6 +985,14 @@ static void __init rb962_setup(void)
+ 	ath79_eth0_data.mii_bus_dev = &ath79_mdio0_device.dev;
+ 	ath79_register_eth(0);
+ 
++	/* init GMAC1 */
++	ath79_init_mac(ath79_eth1_data.mac_addr, ath79_mac_base, 5);
++	ath79_eth1_pll_data.pll_1000 = 0x03000101;
++	ath79_eth1_data.phy_if_mode = PHY_INTERFACE_MODE_SGMII;
++	ath79_eth1_data.speed = SPEED_1000;
++	ath79_eth1_data.duplex = DUPLEX_FULL;
++	ath79_register_eth(1);
++
+ 	/* WLAN1 MAC is HW MAC + 7 */
+ 	rbspi_wlan_init(7);
+ 
+@@ -1251,6 +1268,7 @@ MIPS_MACHINE_NONAME(ATH79_MACH_RB_MAPL, "map-hb", rbmapl_setup);
  MIPS_MACHINE_NONAME(ATH79_MACH_RB_941, "H951L", rbhapl_setup);
  MIPS_MACHINE_NONAME(ATH79_MACH_RB_911L, "911L", rb911l_setup);
  MIPS_MACHINE_NONAME(ATH79_MACH_RB_952, "952-hb", rb952_setup);
